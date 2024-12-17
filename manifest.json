@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "BlockTheTweet",
+  "description": "A Browser Extension for detecting hate speech on X/Twitter powered with AI",
+  "version": "0.1",
+  "icons": {
+    "128": "icons/project-s-icon.png",
+    "16": "icons/project-s-icon.png",
+    "48": "icons/project-s-icon.png",
+    "96": "icons/project-s-icon.png"
+  },
+  "permissions": ["storage"],
+  "options_ui": {
+    "page": "src/html/options.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://twitter.com/*", "https://x.com/*"],
+      "js": [
+        "src/scripts/tf.es2017.js",
+        "src/scripts/preprocessor.js",
+        "src/scripts/index.js"
+      ],
+      "css": ["src/styles/index.css"]
+    }
+  ]
+}
