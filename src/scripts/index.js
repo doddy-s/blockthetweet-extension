@@ -1,51 +1,3 @@
-const TWEET_HIDER = `<div class="open-sans flex h-24 w-90 items-center justify-between rounded-lg border-2 border-blue bg-blue px-4 py-2 my-4 mx-2" blockthetweet="tweetHider">
-<p>Konten ini mungkin mengandung hate-speech, kata-kata kasar, atau tindakan cyberbullying. Klik "Show" untuk melihatnya.</p>
-<button class="px-4 py-2" blockthetweet="showTweet">Show</button>
-</div>`
-
-let LANGUAGES_TO_CHECK = []
-
-let WORD_INDEX = {}
-
-let METADATA = {}
-
-let MODEL = {}
-
-function predictLabel(tokenizedText) {
-  const prediction = MODEL.predict(tf.tensor([tokenizedText])).dataSync()[0]
-  console.log(prediction, text)
-  const label = prediction >= 0.5 ? true : false
-  return label
-}
-
-function tokenize() {
-  let tokenized = []
-  const tokens = text.toLowerCase().split(/\W+/).filter(Boolean)
-  for (let i = 0; i < METADATA?.meta?.dataset?.longest_text || 45; i++) {
-    tokenized[i] = indonesianWordIndex[tokens[i]] || 0
-  }
-
-  return tokenized
-}
-
-async function classify(text) {
-  const lang = await chrome.i18n.detectLanguage(text)
-
-  if (
-    !(METADATA?.languages || ['id', 'ms']).includes(
-      lang?.languages?.[0]?.language
-    )
-  ) {
-    return false
-  }
-
-  try {
-    return predictLabel(tokenize(preprocess(text)))
-  } catch {
-    return false
-  }
-}
-
 async function classifyExternal(text) {
   const lang = await chrome.i18n.detectLanguage(text)
 
@@ -124,7 +76,7 @@ function createTweetHider() {
   container.setAttribute('blockthetweet', 'tweetHider')
 
   const message = document.createElement('p')
-  message.textContent = 'Konten ini mungkin mengandung hate-speech, kata-kata kasar, atau tindakan cyberbullying. Klik "Show" untuk melihatnya.'
+  message.textContent = 'This content may contain hate speech, harsh language, or acts of cyberbullying. Click "Show" to view it.'
   container.appendChild(message)
 
   const button = document.createElement('button')
@@ -138,7 +90,6 @@ function createTweetHider() {
 
 async function blockTweet(tweetTextElement) {
   if (await classifyExternal(tweetTextElement.textContent)) {
-    // if (true) {
     tweetTextElement.classList.add('hidden')
 
     tweetTextElement.parentElement.appendChild(createTweetHider())
@@ -218,10 +169,10 @@ async function fetchModel(url) {
 
 async function main() {
   try {
-    METADATA = await fetchJson(
-      'https://raw.githubusercontent.com/doddy-s/skripsi-s1-informatika/refs/heads/main/Datasets/processed/metadata.json'
-    )
-    console.log('METADATA', METADATA)
+    // METADATA = await fetchJson(
+    //   'https://raw.githubusercontent.com/doddy-s/skripsi-s1-informatika/refs/heads/main/Datasets/processed/metadata.json'
+    // )
+    // console.log('METADATA', METADATA)
 
     // WORD_INDEX = await fetchJson(
     //   'https://raw.githubusercontent.com/doddy-s/skripsi-s1-informatika/refs/heads/main/Datasets/processed/indonesian-hate-speech-processed-word-index.json'
